@@ -94,18 +94,22 @@ enum class TimeUnits(
     YEAR(arrayOf("год", "года", "лет"));
 
     fun format(count: Long? = null, unknown: Boolean = false, after: Boolean = false): String {
-        val output = if (unknown) {
+        val output = plural(count, unknown)
+
+        return if (after) "через $output" else "$output назад"
+    }
+
+    fun plural(count: Long?, unknown: Boolean = false): String {
+        return if (unknown) {
             "несколько ${this.forms[2]}"
         } else if (count == null) {
             this.forms[0]
         } else if (count.rem(10) == 1L && count.div(10) != 1L) {
             "$count ${this.forms[0]}"
-        } else if (count in 2..4 && count.div(10) != 1L) {
+        } else if (count.rem(10) in 2..4 && count.div(10) != 1L) {
             "$count ${this.forms[1]}"
         } else {
             "$count ${this.forms[2]}"
         }
-
-        return if (after) "через $output" else "$output назад"
     }
 }
