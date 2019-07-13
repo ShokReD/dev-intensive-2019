@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Dev-intensive</string>
+    <string name="hint_text">Введите текст</string>
+    <string name="bender_dance_image">bender_dance_image</string>
 </resources>
