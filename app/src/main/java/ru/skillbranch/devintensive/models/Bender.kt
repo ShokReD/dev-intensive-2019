@@ -50,31 +50,31 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
         NAME(
             "Как меня зовут?",
             listOf("Бендер", "bender"),
-            Predicate { it[0].isUpperCase() },
+            Predicate { it.isNotEmpty() && it[0].isUpperCase() },
             "Имя должно начинаться с заглавной буквы"
         ),
         PROFESSION(
             "Назови мою профессию?",
             listOf("сгибальщик", "bender"),
-            Predicate { it[0].isLowerCase() },
+            Predicate { it.isNotEmpty() && it[0].isLowerCase() },
             "Профессия должна начинаться со строчной буквы"
         ),
         MATERIAL(
             "Из чего я сделан?",
             listOf("металл", "дерево", "metal", "iron", "wood"),
-            Predicate { !it.contains(Regex("\\d")) },
+            Predicate { it.isNotEmpty() && !it.contains(Regex("\\d")) },
             "Материал не должен содержать цифр"
         ),
         BIRTHDAY(
             "Когда меня создали?",
             listOf("2993"),
-            Predicate { Regex("^\\d+$").matches(it) },
+            Predicate { it.isNotEmpty() && Regex("^\\d+$").matches(it) },
             "Год моего рождения должен содержать только цифры"
         ),
         SERIAL(
             "Мой серийный номер?",
             listOf("2716057"),
-            Predicate { it.matches(Regex("\\d{7}")) },
+            Predicate { it.isNotEmpty() && it.matches(Regex("\\d{7}")) },
             "Серийный номер содержит только цифры, и их 7"
         ),
         IDLE("На этом все, вопросов больше нет", listOf(), Predicate { true }, null);
