@@ -30,7 +30,7 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
         NORMAL(Triple(255, 255, 255)),
         WARNING(Triple(255, 120, 0)),
         DANGER(Triple(255, 60, 60)),
-        CRITICAL(Triple(255, 255, 0));
+        CRITICAL(Triple(255, 0, 0));
 
         fun nextStatus(): Status {
             return if (this.ordinal < values().lastIndex) {
@@ -49,12 +49,12 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
     ) {
         NAME(
             "Как меня зовут?",
-            listOf("бендер", "bender"),
+            listOf("Бендер", "bender"),
             Predicate { it[0].isUpperCase() },
             "Имя должно начинаться с заглавной буквы"
         ),
         PROFESSION(
-            "Назови мою профессию",
+            "Назови мою профессию?",
             listOf("сгибальщик", "bender"),
             Predicate { it[0].isLowerCase() },
             "Профессия должна начинаться со строчной буквы"
@@ -72,7 +72,7 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
             "Год моего рождения должен содержать только цифры"
         ),
         SERIAL(
-            "Мой серийный номер",
+            "Мой серийный номер?",
             listOf("2716057"),
             Predicate { it.matches(Regex("\\d{7}")) },
             "Серийный номер содержит только цифры, и их 7"
