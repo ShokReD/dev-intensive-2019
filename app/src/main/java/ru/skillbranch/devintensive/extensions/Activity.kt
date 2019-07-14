@@ -3,7 +3,13 @@ package ru.skillbranch.devintensive.extensions
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import kotlin.math.roundToInt
+
+fun Activity.getRootView(): View {
+    return findViewById(android.R.id.content)
+}
 
 fun Activity.hideKeyboard() {
     this.currentFocus?.let {
@@ -14,13 +20,10 @@ fun Activity.hideKeyboard() {
 
 fun Activity.isKeyboardOpen(): Boolean {
     val visibleBounds = Rect()
-    currentFocus?.rootView?.getWindowVisibleDisplayFrame(visibleBounds)
-    val heightDiff = currentFocus?.height?.minus(visibleBounds.height())
-    if (heightDiff != null) {
-        return heightDiff > 0
-    }
-
-    return false
+    this.getRootView().getWindowVisibleDisplayFrame(visibleBounds)
+    val heightDiff = this.getRootView().height.minus(visibleBounds.height())
+    val marginOfError = this.convertDpToPx(50F).roundToInt()
+    return heightDiff > marginOfError
 }
 
 fun Activity.isKeyboardClosed(): Boolean {
