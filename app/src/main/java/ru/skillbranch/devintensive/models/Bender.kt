@@ -1,12 +1,18 @@
 package ru.skillbranch.devintensive.models
 
+import java.util.function.Predicate
+
 class Bender(var status: Status = Status.NORMAL, var question: Question = Question.NAME) {
     fun askQuestion(): String {
         return question.question
     }
 
     fun listenAnswer(answer: String): Pair<String, Triple<Int, Int, Int>> {
-        return if (question.answers.contains(answer)) {
+        if (!question.validate(answer)) {
+            return "${question.wrongMessage}\n${question.question}" to status.color
+        }
+
+        return if (question.answers.onEach { it.toLowerCase() }.contains(answer.toLowerCase())) {
             question = question.nextQuestion()
             "Отлично - ты справился\n${question.question}"
         } else {
@@ -35,13 +41,43 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
         }
     }
 
-    enum class Question(val question: String, val answers: List<String>) {
-        NAME("Как меня зовут?", listOf("бендер", "bender")),
-        PROFESSION("Назови мою профессию", listOf("сгибальщик", "bender")),
-        MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "metal", "iron", "wood")),
-        BIRTHDAY("Когда меня создали?", listOf("2993")),
-        SERIAL("Мой серийный номер", listOf("2716057")),
-        IDLE("На этом все, вопросов больше нет", listOf());
+    enum class Question(
+        val question: String,
+        val answers: List<String>,
+        private val validPredicate: Predicate<String>,
+        val wrongMessage: String?
+    ) {
+        NAME(
+            "Как меня зовут?",
+            listOf("бендер", "bender"),
+            Predicate { it[0].isUpperCase() },
+            "Имя должно начинаться с заглавной буквы"
+        ),
+        PROFESSION(
+            "Назови мою профессию",
+            listOf("сгибальщик", "bender"),
+            Predicate { it[0].isLowerCase() },
+            "Профессия должна начинаться со строчной буквы"
+        ),
+        MATERIAL(
+            "Из чего я сделан?",
+            listOf("металл", "дерево", "metal", "iron", "wood"),
+            Predicate { !it.contains(Regex("\\d")) },
+            "Материал не должен содержать цифр"
+        ),
+        BIRTHDAY(
+            "Когда меня создали?",
+            listOf("2993"),
+            Predicate { Regex("^\\d+$").matches(it) },
+            "Год моего рождения должен содержать только цифры"
+        ),
+        SERIAL(
+            "Мой серийный номер",
+            listOf("2716057"),
+            Predicate { it.matches(Regex("\\d{7}")) },
+            "Серийный номер содержит только цифры, и их 7"
+        ),
+        IDLE("На этом все, вопросов больше нет", listOf(), Predicate { true }, null);
 
         fun nextQuestion(): Question {
             return if (ordinal < values().lastIndex) {
@@ -49,6 +85,10 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
             } else {
                 return values()[values().lastIndex]
             }
+        }
+
+        fun validate(string: String): Boolean {
+            return validPredicate.test(string)
         }
     }
 }
